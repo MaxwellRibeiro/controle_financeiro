@@ -19,6 +19,21 @@ class TransactionViewModel extends ChangeNotifier {
 
   final firestore.FirebaseFirestore _firestore = firestore.FirebaseFirestore.instance;
 
+  Map<String, double> get expensesByCategory {
+    final Map<String, double> data = {};
+
+    for (var transaction in _transactions) {
+      if (data.containsKey(transaction.categoryId)) {
+        data[transaction.categoryId] = data[transaction.categoryId]! + transaction.value;
+      } else {
+        data[transaction.categoryId] = transaction.value;
+      }
+    }
+
+    return data;
+  }
+
+
   /// Retorna apenas transações dos últimos 7 dias
   List<Transaction> get recentTransactions {
     return _transactions.where((tr) {

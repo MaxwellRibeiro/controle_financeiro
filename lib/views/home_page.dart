@@ -7,6 +7,7 @@ import '../widgets/category_form.dart';
 import '../widgets/chart.dart';
 import '../widgets/transaction_form.dart';
 import '../widgets/transaction_list.dart';
+import 'expenses_chart_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,6 +39,14 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Despesas Pessoais'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.pie_chart),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ExpensesChartPage()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.category),
             onPressed: () {
