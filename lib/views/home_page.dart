@@ -16,12 +16,18 @@ class HomePage extends StatelessWidget {
   void _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (_) {
         final viewModel = Provider.of<TransactionViewModel>(
           context,
           listen: false,
         );
-        return TransactionForm(viewModel.addTransaction);
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TransactionForm(viewModel.addTransaction),
+        );
       },
     );
   }
@@ -37,10 +43,14 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Despesas Pessoais'),
+        title: const Text(
+          'Despesas Pessoais',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.pie_chart),
+            tooltip: 'Gráfico de Gastos',
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ExpensesChartPage()),
@@ -49,8 +59,8 @@ class HomePage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.category),
+            tooltip: 'Categorias',
             onPressed: () {
-              // Abre a tela de categorias
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const CategoryForm()),
               );
@@ -58,6 +68,7 @@ class HomePage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
             onPressed: _signOut,
           ),
         ],
@@ -77,9 +88,11 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text('Nova Transação'),
         onPressed: () => _openTransactionFormModal(context),
+        backgroundColor: Colors.purple,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

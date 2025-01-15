@@ -1,10 +1,12 @@
+import 'package:controle_financeiro/views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'package:provider/provider.dart';
 
 import 'views/login_page.dart';
-import 'views/home_page.dart';
 import 'viewmodels/transaction_viewmodel.dart';
 
 Future<void> main() async {
@@ -29,16 +31,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('pt', 'BR'), // Suporte para português do Brasil
+      ],
       // Verifica se há um usuário logado e direciona para a tela apropriada
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          // Se o snapshot tem dados, significa que há um usuário logado
           if (snapshot.hasData) {
-            return const HomePage();
+            return const MainPage(); // Navega para a MainScreen com NavigationBar
           }
-          // Se não, vá para a tela de login
-          return const LoginPage();
+          return const LoginPage(); // Se não houver usuário logado, exibe a tela de login
         },
       ),
     );

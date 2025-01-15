@@ -7,29 +7,18 @@ class LoginPage extends StatelessWidget {
 
   Future<void> _signInWithGoogle() async {
     try {
-      // 1. Faz o pedido de login via Google
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        // Usuário cancelou o login
-        return;
-      }
+      if (googleUser == null) return; // Usuário cancelou o login
 
-      // 2. Obtem os detalhes de autenticação
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      // 3. Cria uma credencial para FirebaseAuth
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // 4. Faz o login no Firebase
       await FirebaseAuth.instance.signInWithCredential(credential);
-      // Se chegou até aqui, estamos logados!
-
     } catch (e) {
-      // Trate os erros de login
       debugPrint('Erro ao fazer login com Google: $e');
     }
   }
@@ -37,14 +26,72 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login com Google"),
-      ),
+      backgroundColor: Colors.purple.shade50, // Fundo suave
       body: Center(
-        child: ElevatedButton.icon(
-          icon: const Icon(Icons.login),
-          label: const Text("Login com Google"),
-          onPressed: _signInWithGoogle,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo ou Ícone
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.purple.shade100,
+                child: Icon(
+                  Icons.account_circle,
+                  size: 80,
+                  color: Colors.purple.shade700,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Título
+              Text(
+                "Bem-vindo ao Controle Financeiro!",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple.shade800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+
+              // Subtítulo
+              Text(
+                "Faça login para acessar suas finanças de forma segura e prática.",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.purple.shade600,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+
+              // Botão de Login com Google
+              ElevatedButton.icon(
+                icon: Image.asset(
+                  'assets/images/google_logo.png', // Certifique-se de ter o logo do Google em assets
+                  height: 24,
+                ),
+                label: const Text(
+                  "Login com Google",
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
+                  elevation: 3,
+                ),
+                onPressed: _signInWithGoogle,
+              ),
+            ],
+          ),
         ),
       ),
     );

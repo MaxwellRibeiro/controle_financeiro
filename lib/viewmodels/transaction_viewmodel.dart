@@ -19,20 +19,29 @@ class TransactionViewModel extends ChangeNotifier {
 
   final firestore.FirebaseFirestore _firestore = firestore.FirebaseFirestore.instance;
 
-  Map<String, double> get expensesByCategory {
-    final Map<String, double> data = {};
+  List<ExpenseData> expensesByCategoryForMonth(DateTime selectedMonth) {
+    final filteredTransactions = transactions.where((transaction) =>
+    transaction.date.month == selectedMonth.month &&
+        transaction.date.year == selectedMonth.year);
 
-    for (var transaction in _transactions) {
-      if (data.containsKey(transaction.categoryId)) {
-        data[transaction.categoryId] = data[transaction.categoryId]! + transaction.value;
+    final Map<String, double> groupedData = {};
+
+    for (var transaction in filteredTransactions) {
+      if (groupedData.containsKey(transaction.categoryId)) {
+        groupedData[transaction.categoryId] =
+            groupedData[transaction.categoryId]! + transaction.value;
       } else {
-        data[transaction.categoryId] = transaction.value;
+        groupedData[transaction.categoryId] = transaction.value;
       }
     }
 
-    return data;
+    return groupedData.entries
+        .map((entry) => ExpenseData(
+      categoryId: entry.key,
+      value: entry.value,
+    ))
+        .toList();
   }
-
 
   /// Retorna apenas transações dos últimos 7 dias
   List<Transaction> get recentTransactions {
@@ -166,4 +175,12 @@ class TransactionViewModel extends ChangeNotifier {
     Hive.close();
     super.dispose();
   }
+}
+
+
+class ExpenseData {
+  final String categoryId;
+  final double value;
+
+  ExpenseData({required this.categoryId, required this.value});
 }
