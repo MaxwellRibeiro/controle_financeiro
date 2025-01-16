@@ -19,6 +19,25 @@ class TransactionViewModel extends ChangeNotifier {
 
   final firestore.FirebaseFirestore _firestore = firestore.FirebaseFirestore.instance;
 
+  /// Retorna a transação correspondente ao título
+  Transaction getTransactionByTitle(String title) {
+    return _transactions.firstWhere(
+          (transaction) => transaction.title == title,
+      orElse: () => Transaction(
+        id: '',
+        title: '',
+        value: 0.0,
+        date: DateTime.now(),
+        categoryId: '',
+      ),
+    );
+  }
+
+  /// Obtém os títulos únicos de todas as transações
+  List<String> getAllTransactionTitles() {
+    return _transactions.map((tr) => tr.title).toSet().toList();
+  }
+
   List<ExpenseData> expensesByCategoryForMonth(DateTime selectedMonth) {
     final filteredTransactions = transactions.where((transaction) =>
     transaction.date.month == selectedMonth.month &&

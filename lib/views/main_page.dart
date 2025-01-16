@@ -47,7 +47,22 @@ class _MainPageState extends State<MainPage> {
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light, // Alterna entre claro e escuro
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Controle Financeiro'),
+          title: Row(
+            mainAxisSize: MainAxisSize.min, // Garante que o Row use apenas o espaço necessário
+            children: [
+              Icon(Icons.account_balance_wallet), // Ícone representando controle financeiro
+              const SizedBox(width: 8), // Espaçamento entre o ícone e o texto
+              const Text('Controle Financeiro'), // Texto ao lado do ícone
+            ],
+          ),
+          centerTitle: true, // Centraliza o título da AppBar
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(1.0), // Altura da linha
+            child: Container(
+              color: Colors.grey, // Cor da linha
+              height: 1.0, // Espessura da linha
+            ),
+          ),
           actions: [
             PopupMenuButton<String>(
               onSelected: (value) {

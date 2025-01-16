@@ -10,6 +10,8 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
       height: 430,
       child: transactions.isEmpty
@@ -42,14 +44,14 @@ class TransactionList extends StatelessWidget {
             ),
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: theme.colorScheme.primary,
                 radius: 30,
                 child: Padding(
                   padding: const EdgeInsets.all(6),
                   child: FittedBox(
                     child: Text(
                       'R\$${tr.value.toStringAsFixed(2)}',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: theme.colorScheme.onPrimary, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

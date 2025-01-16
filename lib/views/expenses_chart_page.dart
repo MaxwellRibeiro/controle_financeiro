@@ -141,7 +141,7 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gráfico de Gastos por Categoria'),
+        title: const Text('Gastos por Categoria'),
         centerTitle: true,
         actions: [
           IconButton(

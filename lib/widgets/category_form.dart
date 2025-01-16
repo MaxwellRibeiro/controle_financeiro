@@ -12,10 +12,6 @@ class CategoryForm extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor, // Cor de fundo adaptada ao tema
-      appBar: AppBar(
-        title: const Text('Nova Categoria'),
-        centerTitle: true,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -26,8 +22,7 @@ class CategoryForm extends StatelessWidget {
               'Cadastrar Nova Categoria',
               style: TextStyle(
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary, // Usa a cor primária do tema
+                fontWeight: FontWeight.bold // Usa a cor primária do tema
               ),
               textAlign: TextAlign.center,
             ),
@@ -55,7 +50,7 @@ class CategoryForm extends StatelessWidget {
                 if (_nameController.text.isNotEmpty) {
                   Provider.of<TransactionViewModel>(context, listen: false)
                       .addCategory(_nameController.text);
-                  Navigator.of(context).pop();
+                  _showErrorSucesso(context, _nameController);
                 } else {
                   _showErrorDialog(context);
                 }
@@ -78,6 +73,33 @@ class CategoryForm extends StatelessWidget {
       ),
     );
   }
+
+  // Mostra um diálogo de sucesso quando a categoria é salva
+  void _showErrorSucesso(BuildContext context, TextEditingController controller) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(context); // Obtém o tema atual
+        return AlertDialog(
+          title: Text(
+            'Sucesso',
+            style: TextStyle(color: theme.colorScheme.primary), // Cor adaptada ao tema
+          ),
+          content: const Text('Categoria salva com sucesso!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+              Navigator.of(ctx).pop();
+              controller.clear();// Fecha o formulário após a confirmação/ Fecha o formulário após a confirmação
+            },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   // Mostra um diálogo de erro se o nome da categoria estiver vazio
   void _showErrorDialog(BuildContext context) {
