@@ -48,23 +48,30 @@ class _TransactionFormState extends State<TransactionForm> {
   _showErrorDialog() {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Erro'),
-        content: const Text('Por favor, preencha todos os campos corretamente.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('OK'),
+      builder: (ctx) {
+        final theme = Theme.of(context);
+        return AlertDialog(
+          title: Text(
+            'Erro',
+            style: TextStyle(color: theme.colorScheme.error),
           ),
-        ],
-      ),
+          content: const Text('Por favor, preencha todos os campos corretamente.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Obtém o tema atual
     final viewModel = Provider.of<TransactionViewModel>(context);
     final categories = viewModel.categories;
 
@@ -72,6 +79,7 @@ class _TransactionFormState extends State<TransactionForm> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 5,
       margin: const EdgeInsets.all(10),
+      color: theme.cardColor, // Cor do card adaptada ao tema
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -84,8 +92,10 @@ class _TransactionFormState extends State<TransactionForm> {
                 labelText: 'Título',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true,
-                fillColor: Colors.grey.shade100,
+                fillColor: theme.colorScheme.surface, // Adapta ao tema
+                labelStyle: TextStyle(color: theme.textTheme.bodyLarge?.color),
               ),
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color), // Cor do texto
             ),
             const SizedBox(height: 10),
 
@@ -97,8 +107,10 @@ class _TransactionFormState extends State<TransactionForm> {
                 labelText: 'Valor (R\$)',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true,
-                fillColor: Colors.grey.shade100,
+                fillColor: theme.colorScheme.surface, // Adapta ao tema
+                labelStyle: TextStyle(color: theme.textTheme.bodyLarge?.color),
               ),
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color), // Cor do texto
             ),
             const SizedBox(height: 10),
 
@@ -110,7 +122,10 @@ class _TransactionFormState extends State<TransactionForm> {
                     _selectedDate == null
                         ? 'Nenhuma data selecionada!'
                         : 'Data: ${_selectedDate!.toLocal()}'.split(' ')[0],
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: theme.textTheme.bodyLarge?.color, // Cor do texto
+                    ),
                   ),
                 ),
                 TextButton(
@@ -130,13 +145,14 @@ class _TransactionFormState extends State<TransactionForm> {
                 labelText: 'Categoria',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 filled: true,
-                fillColor: Colors.grey.shade100,
+                fillColor: theme.colorScheme.surface, // Adapta ao tema
+                labelStyle: TextStyle(color: theme.textTheme.bodyLarge?.color),
               ),
               value: _selectedCategory,
               items: categories.map((category) {
                 return DropdownMenuItem(
                   value: category.id,
-                  child: Text(category.name),
+                  child: Text(category.name, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                 );
               }).toList(),
               onChanged: (value) {
@@ -155,7 +171,8 @@ class _TransactionFormState extends State<TransactionForm> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                backgroundColor: Colors.purple,
+                backgroundColor: theme.colorScheme.primary, // Cor do botão adaptada ao tema
+                foregroundColor: theme.colorScheme.onPrimary, // Cor do texto do botão
               ),
               child: const Text(
                 'Salvar Transação',

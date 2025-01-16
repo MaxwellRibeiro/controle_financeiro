@@ -39,40 +39,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Obtém o tema atual
     final viewModel = Provider.of<TransactionViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Despesas Pessoais',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.pie_chart),
-            tooltip: 'Gráfico de Gastos',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ExpensesChartPage()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.category),
-            tooltip: 'Categorias',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CategoryForm()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Sair',
-            onPressed: _signOut,
-          ),
-        ],
-      ),
       body: viewModel.transactions.isEmpty && viewModel.categories.isEmpty
           ? const Center(
         child: CircularProgressIndicator(),
@@ -92,7 +62,8 @@ class HomePage extends StatelessWidget {
         icon: const Icon(Icons.add),
         label: const Text('Nova Transação'),
         onPressed: () => _openTransactionFormModal(context),
-        backgroundColor: Colors.purple,
+        backgroundColor: theme.colorScheme.primary, // Adapta ao tema
+        foregroundColor: theme.colorScheme.onPrimary, // Cor do texto adaptada
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

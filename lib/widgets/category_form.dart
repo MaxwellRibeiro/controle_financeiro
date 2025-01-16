@@ -8,9 +8,10 @@ class CategoryForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _nameController = TextEditingController();
+    final theme = Theme.of(context); // Obtém o tema atual
 
     return Scaffold(
-      backgroundColor: Colors.purple.shade50, // Fundo suave
+      backgroundColor: theme.scaffoldBackgroundColor, // Cor de fundo adaptada ao tema
       appBar: AppBar(
         title: const Text('Nova Categoria'),
         centerTitle: true,
@@ -26,7 +27,7 @@ class CategoryForm extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.purple.shade800,
+                color: theme.colorScheme.primary, // Usa a cor primária do tema
               ),
               textAlign: TextAlign.center,
             ),
@@ -41,8 +42,10 @@ class CategoryForm extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: theme.colorScheme.surface, // Adapta ao tema
+                labelStyle: TextStyle(color: theme.textTheme.bodyLarge?.color),
               ),
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color), // Cor do texto adaptada ao tema
             ),
             const SizedBox(height: 20),
 
@@ -58,7 +61,8 @@ class CategoryForm extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple.shade600,
+                backgroundColor: theme.colorScheme.primary, // Cor do botão adaptada ao tema
+                foregroundColor: theme.colorScheme.onPrimary, // Cor do texto do botão adaptada
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -79,18 +83,24 @@ class CategoryForm extends StatelessWidget {
   void _showErrorDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Erro'),
-        content: const Text('Por favor, insira um nome para a categoria.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('OK'),
+      builder: (ctx) {
+        final theme = Theme.of(context); // Obtém o tema atual
+        return AlertDialog(
+          title: Text(
+            'Erro',
+            style: TextStyle(color: theme.colorScheme.error), // Cor adaptada ao tema
           ),
-        ],
-      ),
+          content: const Text('Por favor, insira um nome para a categoria.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

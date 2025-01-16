@@ -52,7 +52,7 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).cardColor, // Cor adaptada ao tema
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -65,12 +65,15 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
               return true;
             },
             child: transactions.isEmpty
-                ? const Center(
+                ? Center(
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   'Nenhuma transação para esta categoria no mês selecionado.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -79,27 +82,36 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
               padding: const EdgeInsets.all(16.0),
               itemCount: transactions.length,
               separatorBuilder: (ctx, index) => Divider(
-                color: Colors.grey[300],
+                color: Theme.of(context).dividerColor, // Adapta ao tema
                 thickness: 1,
               ),
               itemBuilder: (ctx, index) {
                 final transaction = transactions[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.green[100],
-                    child: Icon(Icons.monetization_on, color: Colors.green[700]),
+                    backgroundColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                    child: Icon(Icons.monetization_on,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer),
                   ),
                   title: Text(
                     transaction.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   subtitle: Text(
                     'R\$ ${transaction.value.toStringAsFixed(2)}',
-                    style: const TextStyle(color: Colors.green),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   trailing: Text(
                     '${transaction.date.day}/${transaction.date.month}/${transaction.date.year}',
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
                   ),
                 );
               },
@@ -114,10 +126,18 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final viewModel = Provider.of<TransactionViewModel>(context);
     final expensesData = viewModel.expensesByCategoryForMonth(_selectedMonth);
     final categories = viewModel.categories;
-    final List<Color> colors = Colors.primaries;
+
+    // Geração de cores únicas para cada categoria
+    final Map<String, Color> categoryColors = {};
+    for (int i = 0; i < categories.length; i++) {
+      final categoryId = categories[i].id;
+      categoryColors[categoryId] = Colors.primaries[i % Colors.primaries.length]
+          .withOpacity(0.8);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -137,7 +157,7 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
           children: [
             Card(
               elevation: 4,
-              shadowColor: Colors.grey[400],
+              shadowColor: theme.shadowColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -146,16 +166,20 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Mês Selecionado:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: theme.textTheme.bodyLarge?.color,
+                      ),
                     ),
                     Text(
                       '${_selectedMonth.month}/${_selectedMonth.year}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                   ],
@@ -166,8 +190,10 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
             Expanded(
               child: Card(
                 elevation: 5,
-                shadowColor: Colors.grey[400],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shadowColor: theme.shadowColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Column(
                   children: [
                     Expanded(
@@ -177,35 +203,31 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
                         child: PieChart(
                           PieChartData(
                             sections: expensesData
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                              final index = entry.key;
-                              final data = entry.value;
-
-                              return PieChartSectionData(
-                                value: data.value,
-                                title: '${data.value.toStringAsFixed(1)}%',
-                                color: colors[index % colors.length].withOpacity(0.8),
-                                radius: 70,
-                                titleStyle: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              );
-                            }).toList(),
+                                .map((data) => PieChartSectionData(
+                              value: data.value,
+                              title: '${data.value.toStringAsFixed(1)}%',
+                              color: categoryColors[data.categoryId],
+                              radius: 70,
+                              titleStyle: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ))
+                                .toList(),
                             sectionsSpace: 6,
                             centerSpaceRadius: 50,
                             startDegreeOffset: 180,
                             pieTouchData: PieTouchData(
                               touchCallback: (touchResponse) {
-                                final touchedSection = touchResponse.touchedSection;
+                                final touchedSection =
+                                    touchResponse.touchedSection;
                                 if (touchedSection != null) {
-                                  final categoryId = expensesData
-                                      .toList()[touchedSection.touchedSectionIndex]
+                                  final categoryId = expensesData[
+                                  touchedSection.touchedSectionIndex]
                                       .categoryId;
-                                  _showTransactionsForCategory(categoryId, context);
+                                  _showTransactionsForCategory(
+                                      categoryId, context);
                                 }
                               },
                             ),
@@ -235,18 +257,25 @@ class _ExpensesChartPageState extends State<ExpensesChartPage> {
                                     margin: const EdgeInsets.only(right: 10),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: colors[index % colors.length],
+                                      color: categoryColors[categoryId],
                                     ),
                                   ),
                                   Expanded(
                                     child: Text(
                                       categoryName,
-                                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color:
+                                        theme.textTheme.bodyLarge?.color,
+                                      ),
                                     ),
                                   ),
                                   Text(
                                     '${expensesData[index].value.toStringAsFixed(2)}%',
-                                    style: const TextStyle(color: Colors.grey),
+                                    style: TextStyle(
+                                      color: theme.textTheme.bodySmall?.color,
+                                    ),
                                   ),
                                 ],
                               ),
